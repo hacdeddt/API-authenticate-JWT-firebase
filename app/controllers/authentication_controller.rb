@@ -8,8 +8,9 @@ class AuthenticationController < ApplicationController
     return render json: {error: "Token is Invalid"}, status: unauthorized if verify.nil?
     email = verify.first.email rescue nil
     name = verify.first.name rescue nil
+    uuid = verify.first.user_id rescue nil
     @user = User.find_by(email: email)
-    create_user(email, name) if @user.nil?
+    create_user(email, name, uuid) if @user.nil?
     time = Time.now + 24.hours.to_i
     token = JsonWebToken.encode(user_id: @user.id)
     render json: {token: token, exp: time.strftime("%m-%d-%Y %H:%M"),
@@ -25,8 +26,8 @@ class AuthenticationController < ApplicationController
 
   private
 
-  def create_user(email, name)
-    @user = User.new(email: email, name: name)
+  def create_user(email, name, uuid)
+    @user = User.new(id: uuid, email: email, name: name)
     return render json: {errors: @user.errors} unless @user.save
   end
 
