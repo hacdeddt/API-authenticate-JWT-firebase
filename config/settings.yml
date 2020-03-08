@@ -1,0 +1,2 @@
+alg_jwt: 'HS256'
+time_exp: 24
