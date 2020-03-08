@@ -16,6 +16,13 @@ class AuthenticationController < ApplicationController
                   name: @user.name}, status: :ok
   end
 
+  def logout
+    exp = Time.now.yesterday
+    token = JsonWebToken.encode({user_id: @current_user.id}, exp)
+    render json: {token: token, exp: Time.now.yesterday.strftime("%m-%d-%Y %H:%M"),
+                  name: @current_user.name}, status: :ok
+  end
+
   private
 
   def create_user(email, name)
